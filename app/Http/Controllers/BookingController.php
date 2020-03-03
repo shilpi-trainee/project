@@ -43,8 +43,11 @@ class BookingController extends Controller
         //validation
 
         $validation = $request->validate([
-            'booking_name' => 'required',
-            'booking_email' => 'required|email'
+            'booking_name'   => 'required',
+            'booking_email'  => 'required|email',
+            'start_date'     => 'required|date',
+            'end_date'       => 'required|after:start_date',
+            'total'          => 'required|numeric'
         ]);
 
         // Author:shilpitrivedi,
@@ -55,10 +58,36 @@ class BookingController extends Controller
         $booking_name = $request->get('booking_name');
         $start_date = $request->get('start_date');
         $end_date = $request->get('end_date');
-        // $percentage_tax = $request->get('percentage_tax');
-        $booking_email = $request->get('booking_email');
-        $booking_amount = $request->get('booking_amount');
 
+
+        // function dayDiff(firstDate, secondDate) {
+        //     firstDate = new Date(firstDate);
+        //     secondDate = new Date(secondDate);
+        //     if (!isNaN(firstDate) && !isNaN(secondDate)) {
+        //       firstDate.setHours(0, 0, 0, 0); //ignore time part
+        //       secondDate.setHours(0, 0, 0, 0); //ignore time part
+        //       var dayDiff = secondDate - firstDate;
+        //       // console.log(dayDiff);
+        //       dayDiff = dayDiff / 86400000; // divide by milisec in one day
+        //       console.log(dayDiff);
+
+
+        $datetime1 = new DateTime($start_date);
+        $datetime2 = new DateTime($end_date);
+        $interval = $datetime1->diff($datetime2);
+        // dd($interval);
+        $days = $interval->format('%a');
+        $total = $days * 500;
+        if ($total > 10000) {
+            $final_total = $total * 10 / 100;
+            $total = $total + $final_total;
+        } else {
+            $final_total = $total * 5 / 100;
+            $total = $total + $final_total;
+        }
+
+        $percentage_tax = $final_total;
+        $booking_email = $request->get('booking_email');
 
         $start_date1 = date('d-m-Y', strtotime($start_date));
         $end_date1 = date('d-m-Y', strtotime($end_date));
@@ -68,11 +97,13 @@ class BookingController extends Controller
         // Date:25/02/2020,
         // parameters:
 
-        $message_new = "Name :$booking_name, Email : $booking_email, Start Date: $start_date1, End Date: $end_date1, Amount: $booking_amount";
+        $message_new = "Name :$booking_name,Email : $booking_email, \n Start Date: $start_date1, End Date: $end_date1, Amount: $total ,Percantage of Rupees : $final_total";
+        // $message_new = "Name:". $booking_name."<br />". "Email : " .$booking_email."<br />"."Start Date: ".$start_date1."<br />"."End Date :".$end_date1."<br />". "Amount:".$total;
         $email = $booking_email;
         $to_name = $booking_name;
         $to_email = $email;
-        $data = array('name' => "$booking_name", "body" => "$message_new");
+
+        $data = array('name' => "$booking_name", "body" => $message_new);
 
         Mail::send('emails.mail', $data, function ($message) use ($to_name, $to_email) {
             $message->to($to_email, $to_name)
@@ -88,16 +119,16 @@ class BookingController extends Controller
         DB::table('tbl_booking')->insert(
             [
                 'booking_name' => $booking_name,
-                'booking_amount' => $booking_amount,
+                'total' => $total,
+                'percantage_tax'  => $percentage_tax,
                 'start_date' => $start_date,
                 'end_date' => $end_date,
                 'booking_email' => $booking_email
             ]
         );
-        return redirect('booking')->with('success', 'Your Booking Successfully');
+        return redirect('booking')->with('success', 'Thank You For Your Booking Your Starting Date Is From ' . $start_date . ' To Ending Date ' . $end_date . ' Tax Of Rupees Is ' . $percentage_tax . ' Total Amount Is ' . $total . ' Hope You Will Enjoy Your Days');
     }
-
-    /**
+   /**
      * Display the specified resource.
      *
      * @param  int  $id

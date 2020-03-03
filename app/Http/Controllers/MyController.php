@@ -21,7 +21,7 @@ class MyController extends Controller
         $start_date = $request->get('start_date');
         $end_date = $request->get('end_date');
         $booking_name = $request->get('booking_name');
-        $booking_amount = $request->get('booking_amount');
+        $total = $request->get('total');
         DB::enableQueryLog();
 
         $bookedUser = DB::table('tbl_booking')->select('start_date', 'end_date', 'booking_name')
@@ -48,7 +48,7 @@ class MyController extends Controller
         } else {
             session()->put('start_date', $start_date);
             session()->put('end_date', $end_date);
-            session()->put('booking_amount', $booking_amount);
+            session()->put('total', $total);
 
             return redirect('booking/create');
         }

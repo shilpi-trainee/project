@@ -53,21 +53,24 @@
         <div class="input-container">
           <i class="fa fa-calendar icon" aria-hidden="true">:Start Date</i>
           <input type="text" class="col-sm-3 input-field form-control control-label" id="first" autocomplete="off" value="@if(session()->get('start_date')){{session('start_date')}}@endif" readonly autocomplete="off" name="start_date">
-          <!-- @if ($errors->has('start_date'))
+          @if ($errors->has('start_date'))
           <span class="text-danger">{{ $errors->first('start_date') }}</span>
-          @endif -->
+          @endif
         </div>
 
         <div class="input-container">
           <i class="fa fa-calendar icon">:End Date</i>
           <input type="text" id="second" class="col-sm-3 input-field form-control control-label" autocomplete="off" value="@if(session()->get('end_date')){{session('end_date')}}@endif" name="end_date" readonly required>
-          <!-- @if ($errors->has('end_date'))
+          @if ($errors->has('end_date'))
           <span class="text-danger">{{ $errors->first('end_date') }}</span>
-          @endif -->
+          @endif
         </div>
         <div class="input-container">
-          <i class="fa fa-inr icon" aria-hidden="true">:Amount</i>
-          <input type="text" class="col-sm-3 form-control input-field control-label " autocomplete="off" id="booking_amount" value="@if(session()->get('booking_amount')){{session('booking_amount')}}@endif" name="booking_amount" readonly>
+          <i class="fa fa-inr icon" aria-hidden="true">:Amount(Fix amount was with 500(if your total bill was >10000 the tax will be apply as a 10% or else tax will be apply as a 5%))</i>
+          <input type="text" class="col-sm-3 form-control input-field control-label " autocomplete="off" id="total" value="@if(session()->get('total')){{session('total')}}@endif" name="total" readonly>
+          @if ($errors->has('total'))
+          <span class="text-danger">{{ $errors->first('total') }}</span>
+          @endif
         </div>
         <br>
         <div class="input-container">
@@ -77,15 +80,6 @@
   </div>
   <br><br>
   @if(session()->get('success')){{session('success')}}@endif
-  @if($errors->any())
-  <div>
-    <ul>
-      @foreach($errors->all() as $error)
-      <li>{{$error}}</li>
-      @endforeach
-    </ul>
-  </div>
-  @endif
 
   <script type="text/javascript">
     $(document).ready(function() {
@@ -118,7 +112,7 @@
         }
         var mytotal = total + lastval;
         console.log(mytotal);
-        $("#booking_amount").val(mytotal);
+        $("#total").val(mytotal);
       } else {
         //console.log("Enter valid date.");
       }
