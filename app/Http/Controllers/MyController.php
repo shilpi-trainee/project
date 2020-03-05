@@ -31,7 +31,10 @@ class MyController extends Controller
             ->get();
         // print_r($bookedUser);
         // die();
+            // array=>$bookedUser;
 
+            // $getDate=DB::table('tbl_booking')->select('start_date','end_date');
+            // Array=>$getDate;
 
         $booking = DB::table('tbl_booking')
             ->where('start_date', '<=', $start_date)

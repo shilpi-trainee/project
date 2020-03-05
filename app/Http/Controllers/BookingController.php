@@ -96,8 +96,12 @@ class BookingController extends Controller
         // purpose:Email sending,
         // Date:25/02/2020,
         // parameters:
-
-        $message_new = "Name :$booking_name,Email : $booking_email, \n Start Date: $start_date1, End Date: $end_date1, Amount: $total ,Percantage of Rupees : $final_total";
+        $message_new = "Name :  $booking_name
+        Email : $booking_email 
+        Start Date: $start_date1 
+        End Date: $end_date1 
+        Amount: $total
+        Percantage of Rupees : $final_total";
         // $message_new = "Name:". $booking_name."<br />". "Email : " .$booking_email."<br />"."Start Date: ".$start_date1."<br />"."End Date :".$end_date1."<br />". "Amount:".$total;
         $email = $booking_email;
         $to_name = $booking_name;

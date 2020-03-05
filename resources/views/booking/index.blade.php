@@ -9,36 +9,23 @@
   <link rel="stylesheet" href="{{asset('css/form.css')}}">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
-  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" />
-
-  <!-- BOOTSTRAP SCRIPT CDN -->
-
-  <script src="https://code.jquery.com/jquery-3.4.0.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-
-  <!-- DATEPICKER SCRIPT CDN -->
-
-  <script src="https://unpkg.com/gijgo@1.9.13/js/gijgo.min.js" type="text/javascript"></script>
-  <link href="https://unpkg.com/gijgo@1.9.13/css/gijgo.min.css" rel="stylesheet" type="text/css" />
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/4.0.2/bootstrap3-typeahead.min.js"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
   <script src="{{ asset('js/jquery.js') }}"></script>
   <script src="{{ asset('js/jquery.datetimepicker.full.js') }}"></script>
 </head>
 
 <body>
-  <div class="container solid">
+  <div class="container solid add_form" id="form">
     <h2 class="dashed" align="center">Booking Date</h2>
     <br>
-    <form action="{{URL::to('/bookingcheck')}}" method="post" id="form">
+    <form action="{{URL::to('/bookingcheck')}}" id="addform" method="post">
       @csrf
       <div class="row">
         <div class="col-xs-12 col-sm-12 col-md-12">
           <div class="form-group">
-            Start Date :<input type="text" class="col-sm-3 form-control control-label datepicker" id="first" autocomplete="off" name="start_date">
+            Start Date :<input type="text" name="first" id="first" class="col-sm-3 form-control control-label datepicker" style="width:" autocomplete="off">
+
             @if ($errors->has('start_date'))
             <span class="text-danger">{{ $errors->first('start_date') }}</span>
             @endif
@@ -49,20 +36,12 @@
             @endif
           </div>
         </div>
-        <!-- <div class="col-xs-12 col-sm-12 col-md-12">
-          <div class="form-group">
-            End Date : <input type="text" class="col-sm-3 form-control control-label datepicker" id="second" autocomplete="off" name="end_date">
-            @if ($errors->has('end_date'))
-            <span class="text-danger">{{ $errors->first('end_date') }}</span>
-            @endif
-            <br>
-          </div> -->
       </div>
       <input type="hidden" name="total" value="@if(session()->get('total')){{session('total')}}@endif" id="total">
       <br>
       <div class="col-xs-12 col-sm-12 col-md-12">
         <div class="form-group">
-          <input type="submit" id="submit" class="btn btn-primary" name="submit">
+          <input type="submit" id="submit" class="btn btn-primary" onclick="productData()" name="submit">
         </div>
       </div>
       <br><br><br>
@@ -70,9 +49,11 @@
   @if(session()->get('success')){{session('success')}}@endif
   </form>
 
-  
+  <div class="fetchproductData">
+    @include('booking/create')
+  </div>
 
-  <script type="text/javascript">
+<script type="text/javascript">
     $(document).ready(function() {
       $("#second").change(function() {
         dayDiff($('#first').val(), $('#second').val());
@@ -117,30 +98,6 @@
     }
   </script>
 
-  <script>
-    $('#first').datepicker({
-      format: "Y-m-d",
-      maxDate: function() {
-        return $('#second').val();
-      }
-    });
-    $('#second').datepicker({
-      format: "Y-m-d",
-      minDate: function() {
-        return $('#first').val();
-      },
-      change: function(e) {
-        //get date in yyyy/mm/dd format
-        var vl = $(this).val().split('/').reverse().join('/');
-        //getTime to compare with current timestamp
-        var ds = new Date(vl).getTime();
-        //current timestamp
-        var dn = e.timeStamp;
-        $('#submit').prop('disabled', ds < dn);
-      }
-    });
-  </script>
-
   <!-- DatePicker -->
 
   <script>
@@ -155,43 +112,67 @@
     });
   </script>
 
- <script>
-$(document).ready(function(){
-  var select = document.getElementById('id').value;
-  if(select == -1){
-    $("#date").show(); 
-  }
-  if(select == -2){
-    $("#date").hide(); 
-  }
-});
-function hideshow(){
-  var select = document.getElementById('id').value;
-  if(select == -2){
-    $("#date").show(); 
-    
-  }
-  if(select != -2){
-    $("#date").hide(); 
-  }
-}
-</script>
-<script>
-    $(document).ready(function(){
-        var select_ProductID = document.getElementById('id').value;
-        
-        if(select_ProductID == -2){
-        $("#date").show(); 
-        }
-        if(select_ProductID == -1){
-        $("#date").hide(); 
-        }
-        else{
-            $("#date").hide();
-        }
 
-});
-</script>
+  <!-- DatePicker -->
+  <script>
+    var disableDates = ['start_date,end_date'];
+
+    $('.datepicker').datepicker({
+      format: 'Y-m-d',
+      beforeShowDay: function(date) {
+        dmy = year.getYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
+        if (disableDates.indexOf(dmy) != -1) {
+          return false;
+        } else {
+          return true;
+        }
+      }
+    });
+  </script>
+  <script>
+    function productData() {
+      var select_ProductID = document.getElementById('submit').value;
+      // console.log("hii");
+      //alert(select_ProductID);
+      if (select_ProductID == "-1") {
+        $("#contact_form").hide();
+      } else {
+        $("#form").show();
+        $("#contact_form").hide();
+        $.ajax({
+          url: "{{ url('booking') }}" + '/' + select_ProductID + '/create',
+          method: "GET",
+          data: {
+            product_id: select_ProductID,
+            _token: "{{ csrf_token() }}"
+          },
+          success: function(data) {
+            $(".add_form").html(data);
+          }
+        });
+      }
+    }
+
+    function fetchData() {
+      //timeout
+      var select = document.getElementById('addform').value;
+      if (select == -1) {
+        document.getElementById("submit").disabled = true;
+      } else {
+        $.ajax({
+          url: "{{ url('booking/create') }}",
+          method: "POST",
+          data: {
+            id: select,
+            _token: "{{ csrf_token() }}"
+          },
+          success: function(data) {
+            $(".fetchproductData").html(data);
+          }
+        });
+      }
+    }
+    fetchData();
   </script>
 </body>
 

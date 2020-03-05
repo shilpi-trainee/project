@@ -1,6 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,15 +12,11 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/4.0.2/bootstrap3-typeahead.min.js"></script>
 
 </head>
-
-<body>
-
-  <!-- <h1>Booking Form</h1> -->
-
-  <div class="container solid" id="form" align="center">
+@csrf
+<div class="container solid" id="create" align="center">
 
     <form class="well form-horizontal" action="{{route('booking.store')}}" method="post" id="contact_form">
-
+    
       <!-- <form action="{{route('booking.store')}}" method="post"> -->
       <fieldset>
 
@@ -78,46 +71,4 @@
         </div>
     </form>
   </div>
-  <br><br>
-  @if(session()->get('success')){{session('success')}}@endif
-
-  <script type="text/javascript">
-    $(document).ready(function() {
-      $("#first").change(function() {
-        dayDiff($('#first').val(), $('#second').val());
-      });
-    });
-
-    function dayDiff(firstDate, secondDate) {
-      firstDate = new Date(firstDate);
-      secondDate = new Date(secondDate);
-      if (!isNaN(firstDate) && !isNaN(secondDate)) {
-        firstDate.setHours(0, 0, 0, 0); //ignore time part
-        secondDate.setHours(0, 0, 0, 0); //ignore time part
-        var dayDiff = secondDate - firstDate;
-        dayDiff = dayDiff / 86400000; // divide by milisec in one day
-        console.log(dayDiff);
-        //alert(dayDiff);
-
-        var total = dayDiff * 500;
-        // alert(total);
-        if (total > 10000) {
-          var lastval = (total * 10) / 100;
-          console.log(lastval);
-          alert(lastval);
-        } else {
-          var lastval = (total * 5) / 100;
-          console.log(lastval);
-          alert(lastval);
-        }
-        var mytotal = total + lastval;
-        console.log(mytotal);
-        $("#total").val(mytotal);
-      } else {
-        //console.log("Enter valid date.");
-      }
-    }
-  </script>
-</body>
-
-</html>
+     
