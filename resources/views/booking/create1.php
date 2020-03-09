@@ -1,10 +1,8 @@
-@if(isset($product_dataFetch))
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Document</title>
-  < link rel="stylesheet" href="{{asset('css/jquery.datetimepicker.min.css')}}">
   <link rel="stylesheet" href="{{asset('css/form.css')}}">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
@@ -12,15 +10,13 @@
   <script src='https://kit.fontawesome.com/a076d05399.js'></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/4.0.2/bootstrap3-typeahead.min.js"></script>
-  <script src="{{ asset('js/jquery.js') }}"></script>
-  <script src="{{ asset('js/jquery.datetimepicker.full.js') }}"></script>
 
 </head>
 @csrf
 <div class="container solid" id="create" align="center">
 
     <form class="well form-horizontal" action="{{route('booking.store')}}" method="post" id="contact_form">
-    
+
       <!-- <form action="{{route('booking.store')}}" method="post"> -->
       <fieldset>
 
@@ -62,7 +58,6 @@
           <span class="text-danger">{{ $errors->first('end_date') }}</span>
           @endif
         </div>
-
         <div class="input-container">
           <i class="fa fa-inr icon" aria-hidden="true">:Amount(Fix amount was with 500(if your total bill was >10000 the tax will be apply as a 10% or else tax will be apply as a 5%))</i>
           <input type="text" class="col-sm-3 form-control input-field control-label " autocomplete="off" id="total" value="@if(session()->get('total')){{session('total')}}@endif" name="total" readonly>
@@ -76,4 +71,4 @@
         </div>
     </form>
   </div>
-  @endif
+     
