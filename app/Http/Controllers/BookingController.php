@@ -19,17 +19,18 @@ class BookingController extends Controller
      */
     public function index()
     {
-        $data = Booking::all('start_date','end_date')->toArray();
-        $startDates = [];
-        $endDates = [];
-        foreach ($data as $date)
-        {
-            $startDate = explode(' ',$date['start_date']);
-            array_push($startDates,$startDate[0]);
-            $endDate = explode(' ',$date['end_date']);
-            array_push($endDates,$endDate[0]);
-        }
-        return view('booking.index',['start_date'=>$startDates,'endDate'=>$endDates]);
+        //$data = Booking::all('start_date','end_date')->toArray();
+        $data = Booking::select(DB::raw('date(start_date) as start_date,date(end_date) as end_date'))
+            ->where("start_date", "!=", NULL)->orWhere("end_date", "!=", NULL)
+            ->havingRaw("CAST(`start_date` AS CHAR(10)) != 0")->havingRaw("CAST(`end_date` AS CHAR(10)) != 0")->get()->toArray();
+        return view('booking.index', ['data' => $data]);
+        //return view('booking.index');
+    }
+
+    public function getdates()
+    {
+        $data = Booking::all('start_date', 'end_date')->toArray();
+        return json_encode($data);
     }
 
     /**
@@ -39,8 +40,7 @@ class BookingController extends Controller
      */
     public function create()
     {
-        $a = true;
-        return view('booking.index', ['a' => $a]);
+        return view('booking.create');
     }
 
     /**
@@ -59,7 +59,7 @@ class BookingController extends Controller
             'booking_email'  => 'required|email',
             'start_date'     => 'required|date',
             'end_date'       => 'required|after:start_date',
-            'total'          => 'required|numeric'
+            // 'total'          => 'required|numeric'
         ]);
 
         // Author:shilpitrivedi,
@@ -70,12 +70,7 @@ class BookingController extends Controller
         $booking_name = $request->get('booking_name');
         $start_date = $request->get('start_date');
         $end_date = $request->get('end_date');
-        $percentage_tax = $request->get('percentage_tax');
-        $booking_email = $request->get('booking_email');
-        $total = $request->get('total');
 
-        $start_date1 = date('yy-mm-dd', strtotime($start_date));
-        $end_date1 = date('yy-mm-dd', strtotime($end_date));
 
 
         // function dayDiff(firstDate, secondDate) {
@@ -109,22 +104,22 @@ class BookingController extends Controller
 
         $start_date1 = date('d-m-Y', strtotime($start_date));
         $end_date1 = date('d-m-Y', strtotime($end_date));
-
+        session()->put('total', $total);
         // Author:shilpitrivedi,
         // purpose:Email sending,
         // Date:25/02/2020,
         // parameters:
-        $message_new = "Name :$booking_name, Email : $booking_email, Start Date: $start_date1, End Date: $end_date1, Amount: $total";
         $email = $booking_email;
         $to_name = $booking_name;
         $to_email = $email;
-        $data = array('name' => $booking_name, "booking_email" => $booking_email, "start_date" => $start_date1, "end_date" =>$end_date1, "amount" => $total, "Percentage_of_tax_rupees" =>$percentage_tax );
+
+        $data = array('name' => "$booking_name", 'booking_email' => "$booking_email", 'start_date' => "$start_date", 'end_date' => "$end_date", 'Percentage_of_tax_rupees' => "$percentage_tax", 'amount' => "$total", 'No_of_days' => "$days");
 
         Mail::send('emails.mail', $data, function ($message) use ($to_name, $to_email) {
             $message->to($to_email, $to_name)
                 ->subject('Inquiry From Booking');
-              $message->from('crazydev82@gmail.com', 'Booking');
-           });
+            $message->from('crazydev82@gmail.com', 'Booking');
+        });
 
         // Author:shilpitrivedi,
         // purpose:Insert data,
@@ -141,9 +136,9 @@ class BookingController extends Controller
                 'booking_email' => $booking_email
             ]
         );
-        return redirect('booking')->with('success', 'Thank You For Your Booking.. Your Booking Is From ' . $start_date . ' To  ' . $end_date . '..' . ' Tax Of Rupees is ' . $percentage_tax . '..' . ' Total Amount is ' . $total . '..' . ' Hope You Will Enjoy Your Days..');
+        return redirect('booking')->with('success', 'Thank You For Your Booking Your Starting Date Is From ' . $start_date . ' To Ending Date ' . $end_date . ' Tax Of Rupees Is ' . $percentage_tax . ' Total Amount Is ' . $total . ' Hope You Will Enjoy Your Days');
     }
-   /**
+    /**
      * Display the specified resource.
      *
      * @param  int  $id

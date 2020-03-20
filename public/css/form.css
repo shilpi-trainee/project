@@ -5,8 +5,8 @@ h2.dashed {border-style: outset;}
 body {
     background-color: #2ecc71;
     font-family: source-sans-pro, sans-serif;
+    padding: 20px; 
   }
-  
   h1 {
     margin-left: auto;
     margin-top: 50px;

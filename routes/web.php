@@ -14,9 +14,13 @@
 Route::get('/', function () {
     return view('welcome');
 });
-// Route::get('/', function () {
-//     return view('createbooking');
-// });
-Route::resource('booking', 'BookingController');
+
+Route::get('booking', 'BookingController@index');
+
+Route::post('booking-form', 'BookingController@create');
+
+Route::post('/booking-create', 'BookingController@store');
 
 Route::post('bookingcheck', 'MyController@check');
+
+Route::get('session/remove', 'BookingController@deleteSessionData');
